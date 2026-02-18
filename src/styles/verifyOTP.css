@@ -1,0 +1,278 @@
+/* VerifyOTP.css */
+.otp-container {
+  position: relative;
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+  background: linear-gradient(to bottom, #0A0A1A 0%, #1A1A3A 100%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Montserrat', sans-serif;
+  color: #FFFFFF;
+}
+
+.starfield {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+.star {
+  position: absolute;
+  background-color: #FFFFFF;
+  border-radius: 50%;
+  animation: twinkle 3s infinite;
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.2; }
+  50% { opacity: 1; }
+}
+
+.space-station {
+  position: absolute;
+  width: 200px;
+  height: 200px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1;
+  animation: station-rotate 60s linear infinite;
+}
+
+.station-core {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 20px rgba(110, 58, 255, 0.5);
+}
+
+.solar-panel {
+  position: absolute;
+  width: 120px;
+  height: 30px;
+  background: linear-gradient(to right, 
+    rgba(0, 240, 255, 0.1) 0%, 
+    rgba(110, 58, 255, 0.3) 50%, 
+    rgba(0, 240, 255, 0.1) 100%);
+  border: 1px solid rgba(0, 240, 255, 0.3);
+}
+
+.solar-panel.left {
+  top: 35%;
+  right: 100%;
+  transform-origin: right center;
+  animation: panel-tilt-left 8s ease-in-out infinite alternate;
+}
+
+.solar-panel.right {
+  top: 35%;
+  left: 100%;
+  transform-origin: left center;
+  animation: panel-tilt-right 8s ease-in-out infinite alternate;
+}
+
+.antenna {
+  position: absolute;
+  width: 4px;
+  height: 40px;
+  background: linear-gradient(to bottom, #6E3AFF, #00F0FF);
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.communication-dish {
+  position: absolute;
+  width: 30px;
+  height: 20px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  top: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  animation: dish-rotate 5s linear infinite;
+}
+
+@keyframes station-rotate {
+  0% { transform: translate(-50%, -50%) rotate(0deg); }
+  100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+@keyframes panel-tilt-left {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(15deg); }
+}
+
+@keyframes panel-tilt-right {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(-15deg); }
+}
+
+@keyframes dish-rotate {
+  0% { transform: translateX(-50%) rotate(0deg); }
+  100% { transform: translateX(-50%) rotate(360deg); }
+}
+
+.otp-form {
+  position: relative;
+  z-index: 2;
+  background: rgba(10, 10, 26, 0.8);
+  padding: 2rem;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 500px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(110, 58, 255, 0.3);
+  box-shadow: 0 0 30px rgba(110, 58, 255, 0.2);
+  text-align: center;
+}
+
+.otp-form h2 {
+  color: #00F0FF;
+  margin-bottom: 0.5rem;
+  font-size: 1.5rem;
+}
+
+.instruction-text {
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 2rem;
+  font-size: 0.9rem;
+}
+
+.phone-number {
+  color: #6E3AFF;
+  font-weight: bold;
+}
+
+.otp-inputs {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.otp-inputs input {
+  width: 40px;
+  height: 50px;
+  text-align: center;
+  font-size: 1.5rem;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(110, 58, 255, 0.3);
+  border-radius: 4px;
+  color: #FFFFFF;
+  transition: all 0.3s ease;
+}
+
+.otp-inputs input:focus {
+  outline: none;
+  border-color: #00F0FF;
+  box-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
+  transform: translateY(-2px);
+}
+
+.otp-inputs input.error {
+  border-color: #FF6B35;
+  animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-5px); }
+  40%, 80% { transform: translateX(5px); }
+}
+
+.error-message {
+  color: #FF6B35;
+  margin-bottom: 1.5rem;
+  font-size: 0.9rem;
+}
+
+.otp-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.resend-button, .verify-button {
+  flex: 1;
+  padding: 0.75rem;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
+}
+
+.resend-button {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(110, 58, 255, 0.3);
+  color: #6E3AFF;
+}
+
+.resend-button:hover:not(:disabled) {
+  background: rgba(110, 58, 255, 0.1);
+  border-color: #6E3AFF;
+}
+
+.resend-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.verify-button {
+  background: linear-gradient(to right, #6E3AFF, #3A1AFF);
+  border: none;
+  color: #FFFFFF;
+}
+
+.verify-button:hover:not(:disabled) {
+  background: linear-gradient(to right, #7E4AFF, #4A2AFF);
+  box-shadow: 0 0 15px rgba(110, 58, 255, 0.5);
+}
+
+.verify-button:disabled {
+  background: linear-gradient(to right, #3A1A7F, #1A0A7F);
+  cursor: not-allowed;
+}
+
+.resend-button svg, .verify-button svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .otp-form {
+    padding: 1.5rem;
+    width: 95%;
+  }
+  
+  .otp-inputs input {
+    width: 35px;
+    height: 45px;
+    font-size: 1.2rem;
+  }
+  
+  .otp-actions {
+    flex-direction: column;
+  }
+  
+  .space-station {
+    width: 150px;
+    height: 150px;
+  }
+}

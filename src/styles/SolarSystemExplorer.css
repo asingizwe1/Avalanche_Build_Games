@@ -1,0 +1,132 @@
+.nasa-container {
+  width: 100%;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: #0b3d91;
+  color: white;
+  font-family:'Montserrat','Nasalization', 'Arial', sans-serif;
+  display: flex;
+  flex-direction: column;
+}
+
+
+.nasa-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: rgba(0, 0, 0, 0.5);
+  border-bottom: 1px solid #1a6cf0;
+}
+
+.nasa-logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+.nasa-red {
+  color: #fc3d21;
+}
+
+.nasa-date {
+  font-size: 1rem;
+  opacity: 0.8;
+}
+
+.nasa-canvas-container {
+  flex: 1;
+  position: relative;
+  width: 100%;
+  height: calc(100% - 100px);
+}
+
+.nasa-info-panel {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 250px;
+  padding: 15px;
+  background-color: rgba(11, 61, 145, 0.8);
+  border: 1px solid #1a6cf0;
+  border-radius: 5px;
+  z-index: 10;
+}
+
+.nasa-info-panel h3 {
+  margin-top: 0;
+  color: #fc3d21;
+  font-size: 1.3rem;
+  text-transform: uppercase;
+}
+
+.nasa-info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 15px 0;
+}
+
+.nasa-info-grid div span:first-child {
+  font-weight: bold;
+  color: #ffffff;
+}
+
+.nasa-info-grid div span:last-child {
+  color: #aaaaaa;
+}
+
+.nasa-divider {
+  height: 1px;
+  background-color: #1a6cf0;
+  margin: 10px 0;
+}
+
+.nasa-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: rgba(0, 0, 0, 0.5);
+  border-top: 1px solid #1a6cf0;
+}
+
+.nasa-control-group {
+  display: flex;
+  gap: 10px;
+}
+
+.nasa-button {
+  padding: 8px 15px;
+  background-color: #1a6cf0;
+  color: white;
+  border: none;
+  border-radius: 3px;
+  font-family: 'Nasalization', 'Arial', sans-serif;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.nasa-button:hover {
+  background-color: #0d5bd8;
+}
+
+.nasa-instructions {
+  font-size: 0.9rem;
+  opacity: 0.8;
+}
+
+/* Animation for selected planet highlight */
+@keyframes planetPulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(252, 61, 33, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(252, 61, 33, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(252, 61, 33, 0);
+  }
+}

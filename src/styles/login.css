@@ -1,0 +1,299 @@
+/* Login.css */
+
+.login-container {
+  position: relative;
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+  background: linear-gradient(to bottom, #0A0A1A 0%, #1A1A3A 100%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Montserrat', sans-serif;
+  color: #FFFFFF;
+}
+
+.starfield {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+.star {
+  position: absolute;
+  background-color: #FFFFFF;
+  border-radius: 50%;
+  animation: twinkle 3s infinite;
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.2; }
+  50% { opacity: 1; }
+}
+
+.rocket-animation {
+  position: absolute;
+  width: 100%;
+  height: 60%;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  z-index: 1;
+}
+
+.launch-platform {
+  position: absolute;
+  width: 120px;
+  height: 20px;
+  background: linear-gradient(to right, #333 0%, #666 50%, #333 100%);
+  bottom: 0;
+  border-radius: 50% 50% 0 0;
+}
+
+.rocket {
+  position: absolute;
+  width: 40px;
+  height: 100px;
+  background: linear-gradient(to bottom, #6E3AFF 0%, #3A1AFF 100%);
+  bottom: 20px;
+  border-radius: 8px 8px 0 0;
+  transform-origin: center bottom;
+}
+
+.rocket:before {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-left: 20px solid transparent;
+  border-right: 20px solid transparent;
+  border-bottom: 30px solid #FF6B35;
+  bottom: -30px;
+}
+
+.exhaust {
+  position: absolute;
+  width: 30px;
+  height: 50px;
+  background: radial-gradient(circle, #FF6B35 0%, #FF9B35 50%, transparent 70%);
+  bottom: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  filter: blur(5px);
+}
+
+.smoke {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background-color: rgba(255, 255, 255, 0.7);
+  border-radius: 50%;
+  bottom: 0;
+  filter: blur(3px);
+}
+
+@keyframes hover {
+  0% { transform: translateY(0px); }
+  100% { transform: translateY(-10px); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.7; height: 50px; }
+  50% { opacity: 1; height: 70px; }
+}
+
+@keyframes launch {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-100vh); }
+}
+
+@keyframes exhaust-blast {
+  0% { height: 50px; filter: blur(5px); }
+  50% { height: 150px; filter: blur(10px); }
+  100% { height: 0; opacity: 0; }
+}
+
+@keyframes smoke-rise {
+  0% { transform: translateY(0) scale(1); opacity: 1; }
+  100% { transform: translateY(-100px) scale(3); opacity: 0; }
+}
+
+.auth-form {
+  position: relative;
+  z-index: 2;
+  background: rgba(10, 10, 26, 0.8);
+  padding: 2rem;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 400px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(110, 58, 255, 0.3);
+  box-shadow: 0 0 30px rgba(110, 58, 255, 0.2);
+}
+
+.form-toggle {
+  display: flex;
+  margin-bottom: 2rem;
+  border-bottom: 1px solid rgba(110, 58, 255, 0.3);
+}
+
+.form-toggle button {
+  flex: 1;
+  background: none;
+  border: none;
+  color: #FFFFFF;
+  padding: 0.75rem;
+  font-size: 1rem;
+  cursor: pointer;
+  position: relative;
+}
+
+.form-toggle button.active {
+  color: #00F0FF;
+}
+
+.form-toggle button.active:after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(to right, #6E3AFF, #00F0FF);
+}
+
+.input-group {
+  margin-bottom: 1.5rem;
+  position: relative;
+}
+
+.input-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #00F0FF;
+  font-size: 0.9rem;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 0.75rem;
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  border-radius: 4px;
+  color: #FFFFFF;
+  font-size: 1rem;
+}
+
+.input-group input:focus {
+  outline: none;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.input-underline {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(to right, #6E3AFF, #00F0FF);
+  transition: width 0.3s ease;
+}
+
+.input-group input:focus ~ .input-underline {
+  width: 100%;
+}
+
+.error-message {
+  color: #FF6B35;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
+
+.launch-button {
+  width: 100%;
+  padding: 1rem;
+  background: linear-gradient(to right, #6E3AFF, #3A1AFF);
+  border: none;
+  border-radius: 4px;
+  color: #FFFFFF;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.launch-button:hover {
+  background: linear-gradient(to right, #7E4AFF, #4A2AFF);
+  box-shadow: 0 0 15px rgba(110, 58, 255, 0.5);
+}
+
+.launch-button:disabled {
+  background: linear-gradient(to right, #3A1A7F, #1A0A7F);
+  cursor: not-allowed;
+}
+
+.launch-button svg {
+  width: 20px;
+  height: 20px;
+  fill: #FFFFFF;
+}
+
+.social-login {
+  margin-top: 2rem;
+  text-align: center;
+}
+
+.social-login p {
+  margin-bottom: 1rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.social-icons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.social-icons button {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.1);
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.3s ease;
+}
+
+.social-icons button:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+}
+
+.social-icons button svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .auth-form {
+    padding: 1.5rem;
+    width: 95%;
+  }
+  
+  .rocket-animation {
+    height: 50%;
+  }
+}

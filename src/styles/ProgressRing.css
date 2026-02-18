@@ -1,0 +1,46 @@
+.progress-ring-container {
+  position: relative;
+  width: 120px;
+  height: 160px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin: 0.5rem;
+}
+
+.progress-ring-container:hover {
+  transform: translateY(-5px);
+}
+
+.progress-ring {
+  transform: rotate(-90deg);
+}
+
+.progress-ring-circle {
+  transition: stroke-dashoffset 1s ease;
+}
+
+.progress-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 1.5rem;
+  font-weight: bold;
+  font-family: 'Orbitron', sans-serif;
+}
+
+.progress-label {
+  margin-top: 1rem;
+  font-size: 1rem;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 500;
+}
+
+/* Animation for ring glow */
+.progress-ring-container:hover .progress-ring-circle {
+  filter: drop-shadow(0 0 5px currentColor);
+}

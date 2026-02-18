@@ -1,0 +1,57 @@
+.news-article {
+  background: rgba(15, 15, 35, 0.7);
+  border-radius: 12px;
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  border-left: 3px solid #6E3AFF;
+}
+
+.news-article:hover {
+  background: rgba(25, 25, 55, 0.7);
+  transform: translateX(5px);
+}
+
+.news-article h3 {
+  margin: 0 0 0.5rem;
+  color: #FFFFFF;
+  font-size: 1.1rem;
+}
+
+.news-article p {
+  margin: 0 0 0.5rem;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.article-date {
+  font-size: 0.8rem;
+  color: rgba(0, 240, 255, 0.7);
+  font-family: 'Courier New', monospace;
+}
+
+.article-category {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: rgba(110, 58, 255, 0.3);
+  color: #00F0FF;
+  font-size: 0.7rem;
+  padding: 0.25rem 0.75rem;
+  border-bottom-left-radius: 8px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Category-specific colors */
+.news-article[data-category="discoveries"] {
+  border-left-color: #00F0FF;
+}
+.news-article[data-category="news"] {
+  border-left-color: #FF6B35;
+}
+.news-article[data-category="events"] {
+  border-left-color: #6E3AFF;
+}
