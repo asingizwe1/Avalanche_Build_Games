@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/login.css'; // We'll create this CSS file next
+import { connectWallet } from '../utils/connectWallet';
 
 
 const Login = () => {
