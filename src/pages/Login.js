@@ -74,11 +74,11 @@ const Login = () => {
       // Trigger rocket launch animation
       launchRocket();
 
-      await connectWallet(); // WalletConnect logic
+      const walletAddress = await connectWallet();// WalletConnect logic
 
       // After animation completes (3 seconds), navigate to dashboard
       setTimeout(() => {
-        navigate('/dashboard');
+        navigate('/dashboard', { state: { walletAddress } });
       }, 3000);
 
     } catch (err) {
