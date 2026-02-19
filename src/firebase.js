@@ -21,3 +21,5 @@ const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 
 
+// Export Firestore DB
+export const db = getFirestore(app);
