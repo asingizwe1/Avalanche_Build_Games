@@ -1,6 +1,5 @@
-// 🚀 Galactic Voyage Game
-import React, { useState, useEffect } from 'react';
-import QuizComponent from './QuizComponent'; // Make sure this is shared or embedded
+import React, { useState, useEffect, useRef } from 'react';
+import QuizComponent from './QuizComponent';
 import '../styles/JourneyGame.css';
 
 const planets = [
@@ -12,75 +11,82 @@ const planets = [
     { name: 'Pluto', distance: 600, isFinal: true },
 ];
 
-const PlanetJourney = ({ onReachPluto }) => {
-    const [position, setPosition] = useState(0);
+const JourneyGame = () => {
+    const [currentPlanetIndex, setCurrentPlanetIndex] = useState(0);
     const [fuel, setFuel] = useState(100);
-    const [quizMode, setQuizMode] = useState(false);
-    const [currentPlanet, setCurrentPlanet] = useState(0);
-    const [gameOver, setGameOver] = useState(false);
+    const [position, setPosition] = useState(0);
+    const [showQuiz, setShowQuiz] = useState(false);
+    const [rocketLeft, setRocketLeft] = useState(50);
+    const rocketRef = useRef(null);
+
+    const currentPlanet = planets[currentPlanetIndex];
+
+    useEffect(() => {
+        if (position >= currentPlanet.distance) {
+            setShowQuiz(true);
+        }
+    }, [position, currentPlanet.distance]);
 
     const handleKeyPress = (e) => {
-        if (quizMode || gameOver) return;
-        if (fuel <= 0) {
-            setGameOver(true);
-            return;
-        }
+        if (fuel <= 0 || showQuiz) return;
 
-        if (e.key === 'ArrowLeft') setPosition(pos => pos - 10);
-        if (e.key === 'ArrowRight') setPosition(pos => pos + 10);
-
-        setFuel(f => f - 2);
-        if ((position + 50) >= planets[currentPlanet].distance) {
-            setQuizMode(true);
+        if (e.key === 'ArrowRight') {
+            setPosition(prev => Math.min(prev + 10, currentPlanet.distance));
+            setFuel(prev => Math.max(prev - 2, 0));
+            setRocketLeft(prev => Math.min(prev + 2, 90));
+        } else if (e.key === 'ArrowLeft') {
+            setPosition(prev => Math.max(prev - 10, 0));
+            setFuel(prev => Math.max(prev - 1, 0));
+            setRocketLeft(prev => Math.max(prev - 2, 10));
         }
     };
 
     useEffect(() => {
         window.addEventListener('keydown', handleKeyPress);
-        return () => window.removeEventListener('keydown', handleKeyPress);
-    }, [position, fuel, quizMode]);
+        return () => {
+            window.removeEventListener('keydown', handleKeyPress);
+        };
+    }, [fuel, showQuiz]);
 
-    const handleQuizSuccess = () => {
-        const nextPlanet = currentPlanet + 1;
-        if (planets[nextPlanet]) {
-            setCurrentPlanet(nextPlanet);
-            setFuel(100);
-            setQuizMode(false);
+    const handleQuizComplete = () => {
+        if (currentPlanet.isFinal) {
+            alert('Mission Complete! 🎉');
         } else {
-            onReachPluto();
+            setCurrentPlanetIndex(prev => prev + 1);
+            setPosition(0);
+            setFuel(100);
+            setRocketLeft(50);
+            setShowQuiz(false);
         }
     };
 
     return (
-        <div className="planet-journey">
-            <h2>Journey to {planets[currentPlanet].name}</h2>
-            <div className="hud">
-                <p>Fuel: {fuel}%</p>
-                <p>Position: {position} / {planets[currentPlanet].distance}</p>
-            </div>
+        <div className="journey-container">
+            <h2>Journey to {currentPlanet.name}</h2>
+            <p>Fuel: {fuel}%</p>
+            <p>Position: {position} / {currentPlanet.distance}</p>
+
             <div className="space-area">
-                <div className="rocket" style={{ left: `${position}px` }}>🚀</div>
-                <div className="planet" style={{ left: `${planets[currentPlanet].distance}px` }}>
-                    🪐 {planets[currentPlanet].name}
+                <div
+                    ref={rocketRef}
+                    className="rocket-sprite"
+                    style={{ left: `${rocketLeft}%` }}
+                >
+                    <span role="img" aria-label="rocket">🚀</span>
+                </div>
+
+                <div className="planet-checkpoint">
+                    <span role="img" aria-label="planet">🪐</span> {currentPlanet.name}
                 </div>
             </div>
 
-            {quizMode && (
-                <QuizComponent
-                    questions={[
-                        {
-                            question: "Which planet has the largest moon in the solar system?",
-                            options: ["Earth", "Jupiter", "Saturn", "Neptune"],
-                            correctAnswer: 1,
-                        }
-                    ]}
-                    onComplete={handleQuizSuccess}
-                />
+            {showQuiz && (
+                <div className="quiz-popup">
+                    <QuizComponent onComplete={handleQuizComplete} planet={currentPlanet.name} />
+                </div>
             )}
-
-            {gameOver && <div className="game-over">Game Over — Out of fuel!</div>}
         </div>
     );
 };
 
-export default PlanetJourney;
+export default JourneyGame;
