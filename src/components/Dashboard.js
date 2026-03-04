@@ -7,7 +7,7 @@ import CosmicBadge from '../components/CosmicBadge';
 import NewsFeed from '../components/NewsFeed';
 import QuickAccessMenu from '../components/QuickAccessMenu';
 import GameCard from './GameGuard';
-import { db } from '../firebase'; 
+import { db } from '../firebase';
 import { collection, getDocs, query, orderBy } from 'firebase/firestore';
 
 const Dashboard = () => {
@@ -23,26 +23,26 @@ const Dashboard = () => {
   ]);
   const [leaderboard, setLeaderboard] = useState([]);
   const [games, setGames] = useState([
-    { 
-      id: 1, 
-      title: 'AstroKeys', 
-      icon: '🚀', 
+    {
+      id: 1,
+      title: 'AstroKeys',
+      icon: '🚀',
       description: 'How fast can you type aerospace-related words before time runs out?',
       progress: 40,
       path: '/games/fast-typing-game'
     },
-    { 
-      id: 2, 
-      title: 'Planet Explorer', 
-      icon: '🪐', 
-      description: 'Journey through the solar system',
+    {
+      id: 2,
+      title: 'Galactic Voyage',
+      icon: '🪐',
+      description: 'Journey through the solar system, dodge debris, answer quiz fuel boosts, and mint your badge.',
       progress: 40,
       path: '/games/planet-explorer'
     },
-    { 
-      id: 3, 
-      title: 'Cosmic Quiz', 
-      icon: '🔭', 
+    {
+      id: 3,
+      title: 'Cosmic Quiz',
+      icon: '🔭',
       description: 'Test your space knowledge',
       progress: 85,
       path: '/games/cosmic-quiz'
@@ -53,15 +53,15 @@ const Dashboard = () => {
   useEffect(() => {
     // Simulate loading data
     const fetchData = async () => {
-    try {
-      const q = query(collection(db, 'leaderboard'), orderBy('points'));
-      const querySnapshot = await getDocs(q);
-      const data = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      setLeaderboard(data);
-    } catch (error) {
-      console.error('Error fetching leaderboard:', error);
-    }
-  };
+      try {
+        const q = query(collection(db, 'leaderboard'), orderBy('points'));
+        const querySnapshot = await getDocs(q);
+        const data = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        setLeaderboard(data);
+      } catch (error) {
+        console.error('Error fetching leaderboard:', error);
+      }
+    };
 
     fetchData();
   }, []);
@@ -82,7 +82,7 @@ const Dashboard = () => {
         <div className="twinkling"></div>
         <div className="cosmic-dust"></div>
       </div>
-      
+
       {/* Main Dashboard Content */}
       <div className="dashboard-content">
         <header className="dashboard-header">
@@ -108,7 +108,7 @@ const Dashboard = () => {
               />
               <div className="progress-label">Aerospace</div>
             </div>
-            
+
             <div className="progress-ring-item" onClick={() => handleModuleSelect('rockets')}>
               <CircularProgressbar
                 value={userProgress.rockets}
@@ -123,7 +123,7 @@ const Dashboard = () => {
               />
               <div className="progress-label">Rocket Science</div>
             </div>
-            
+
             <div className="progress-ring-item" onClick={() => handleModuleSelect('solar-system')}>
               <CircularProgressbar
                 value={userProgress.solarSystem}
@@ -169,7 +169,7 @@ const Dashboard = () => {
           <h2>Cosmic Badges</h2>
           <div className="badges-grid">
             {recentBadges.map(badge => (
-              <CosmicBadge 
+              <CosmicBadge
                 key={badge.id}
                 name={badge.name}
                 icon={badge.icon}

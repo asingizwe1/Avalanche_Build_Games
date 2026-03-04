@@ -1,0 +1,55 @@
+/* JourneyGame.css */
+.planet-journey-game {
+    background: radial-gradient(ellipse at center, #020024, #090979, #000000);
+    height: 100vh;
+    color: #fff;
+    font-family: 'Orbitron', sans-serif;
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.rocket {
+    font-size: 2rem;
+    position: absolute;
+    top: 80%;
+    left: 10%;
+    transition: left 0.2s ease;
+}
+
+.planet {
+    position: absolute;
+    bottom: 50px;
+    right: 5%;
+    background: #222;
+    padding: 0.5rem 1rem;
+    border: 2px solid #fff;
+    border-radius: 50px;
+}
+
+.fuel-bar {
+    height: 15px;
+    background: green;
+    margin: 10px 0;
+    width: 100%;
+    max-width: 200px;
+    transition: width 0.3s;
+}
+
+.quiz-box {
+    background: rgba(0, 0, 0, 0.8);
+    padding: 1rem;
+    border: 1px solid #fff;
+    margin-top: 1rem;
+    max-width: 300px;
+}
+
+.quiz-box button {
+    background: #fff;
+    color: #000;
+    border: none;
+    padding: 0.5rem;
+    margin: 0.25rem 0;
+    cursor: pointer;
+    width: 100%;
+}
