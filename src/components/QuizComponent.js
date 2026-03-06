@@ -12,10 +12,14 @@ const QuizComponent = ({ questions, onComplete }) => {
     if (!answered) {
       setSelectedAnswer(answerIndex);
       setAnswered(true);
-      
-      if (answerIndex === questions[currentQuestion].correctAnswer) {
+
+      const isCorrect = answerIndex === questions[currentQuestion].correctAnswer;
+      if (isCorrect) {
         setScore(score + 1);
       }
+      setTimeout(() => {
+        onComplete(isCorrect);
+      }, 1200);
     }
   };
 
@@ -25,7 +29,7 @@ const QuizComponent = ({ questions, onComplete }) => {
       setSelectedAnswer(null);
       setAnswered(false);
     } else {
-      setShowResult(true);
+      setShowResult(true); // show result screen
     }
   };
 
@@ -36,6 +40,8 @@ const QuizComponent = ({ questions, onComplete }) => {
     setShowResult(false);
     setAnswered(false);
   };
+
+  const [gameFinished, setGameFinished] = useState(false);
 
   if (showResult) {
     return (
@@ -59,7 +65,7 @@ const QuizComponent = ({ questions, onComplete }) => {
         </div>
         <div className="quiz-actions">
           <button onClick={resetQuiz}>Retake Quiz</button>
-          <button onClick={onComplete}>Continue Learning</button>
+          <button onClick={() => onComplete(score > 0)}>Continue Journey</button>
         </div>
       </div>
     );
@@ -77,19 +83,16 @@ const QuizComponent = ({ questions, onComplete }) => {
         {questions[currentQuestion].options.map((option, index) => (
           <button
             key={index}
-            className={`quiz-option ${
-              selectedAnswer === index ? 'selected' : ''
-            } ${
-              answered && index === questions[currentQuestion].correctAnswer 
-                ? 'correct' 
+            className={`quiz-option ${selectedAnswer === index ? 'selected' : ''
+              } ${answered && index === questions[currentQuestion].correctAnswer
+                ? 'correct'
                 : ''
-            } ${
-              answered && 
-              selectedAnswer === index && 
-              selectedAnswer !== questions[currentQuestion].correctAnswer 
-                ? 'incorrect' 
+              } ${answered &&
+                selectedAnswer === index &&
+                selectedAnswer !== questions[currentQuestion].correctAnswer
+                ? 'incorrect'
                 : ''
-            }`}
+              }`}
             onClick={() => handleAnswerSelect(index)}
             disabled={answered}
           >
@@ -108,7 +111,7 @@ const QuizComponent = ({ questions, onComplete }) => {
               ❌ The correct answer is: {questions[currentQuestion].options[questions[currentQuestion].correctAnswer]}
             </div>
           )}
-          <button 
+          <button
             className="next-question"
             onClick={handleNextQuestion}
           >

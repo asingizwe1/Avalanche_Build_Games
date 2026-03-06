@@ -4,15 +4,21 @@ import RocketModel from './RocketModel';
 import QuizComponent from './QuizComponent';
 import '../styles/JourneyGame.css';
 import { OrbitControls, Stars, Text } from '@react-three/drei';
+import { useNavigate } from 'react-router-dom';
+import { setDoc, doc } from 'firebase/firestore';
+import { db } from '../firebase';
+
 
 
 const PlanetJourney = ({ onReachPluto }) => {
+    const navigate = useNavigate();
     const [position, setPosition] = useState(0);
     const [fuel, setFuel] = useState(100);
     const [quizMode, setQuizMode] = useState(false);
     const [currentPlanet, setCurrentPlanet] = useState(0);
     const [gameOver, setGameOver] = useState(false);
     const [quizCompleted, setQuizCompleted] = useState(false);
+    const [gameFinished, setGameFinished] = useState(false);
     const [xp, setXp] = useState(0);
     const [points, setPoints] = useState(0);
     const [questions] = useState([
@@ -91,22 +97,42 @@ const PlanetJourney = ({ onReachPluto }) => {
         return () => window.removeEventListener('keydown', handleKeyPress);
     }, [position, fuel, quizMode]);
 
-    const handleQuizSuccess = () => {
-        setXp((prevXp) => prevXp + 50); // award XP
-        setPoints((prevPoints) => prevPoints + 100); // award points
+    const handleQuizSuccess = async (isCorrect) => {
+        if (isCorrect) {
+            setXp((prev) => prev + 50);
+            setPoints((prev) => prev + 100);
+            setFuel(100);
+            setQuizCompleted(true);
+            setTimeout(() => setQuizCompleted(false), 2000);
+        }
+
         const nextPlanet = currentPlanet + 1;
 
         if (planets[nextPlanet]) {
             setCurrentPlanet(nextPlanet);
-            setFuel(100);
             setQuizMode(false);
-            setQuizCompleted(true);
-            setTimeout(() => setQuizCompleted(false), 2000);
         } else {
-            onReachPluto();
-            console.log('Final XP:', xp, 'Points:', points); // hook for onchain
+            // Game is complete – save onchain record
+            await setDoc(doc(db, 'leaderboard', 'cosmokid'), {
+                xp,
+                points,
+                updated: new Date().toISOString(),
+            }, { merge: true });
+
+            setGameFinished(true); // mark game done
         }
     };
+
+    useEffect(() => {
+        if (gameFinished || gameOver) {
+            const timeout = setTimeout(() => {
+                navigate('/dashboard');
+            }, 5000); // 5 seconds
+
+            return () => clearTimeout(timeout);
+        }
+    }, [gameFinished, gameOver]);
+
     useEffect(() => {
         window.addEventListener('keydown', handleKeyPress);
         return () => window.removeEventListener('keydown', handleKeyPress);
@@ -182,12 +208,27 @@ const PlanetJourney = ({ onReachPluto }) => {
                 <div className="quiz-popup">
                     <QuizComponent
                         questions={[questions.find(q => q.planet === planets[currentPlanet].name)]}
-                        onComplete={handleQuizSuccess}
+                        onComplete={(isCorrect) => handleQuizSuccess(isCorrect)}
                     />
                 </div>
             )}
 
-            {gameOver && <div className="game-over">Game Over — Out of fuel!</div>}
+            {gameOver && (
+                <div className="game-complete">
+                    <h2>🚫 Game Over — Out of Fuel</h2>
+                    <p>Nice try, astronaut! You made it to {planets[currentPlanet].name}.</p>
+                    <p>XP Earned: {xp}</p>
+                    <p>Total Points: {points}</p>
+                    <button onClick={() => navigate('/dashboard')}>Return to Dashboard</button>
+                </div>
+            )}            {gameFinished && (
+                <div className="game-complete">
+                    <h2>🌌 Journey Complete!</h2>
+                    <p>You’ve reached Pluto. Great job!</p>
+                    <p>Total XP: {xp}</p>
+                    <p>Total Points: {points}</p>
+                    <button onClick={() => navigate('/dashboard')}>Go to Dashboard</button>                </div>
+            )}
         </div>
     );
 };

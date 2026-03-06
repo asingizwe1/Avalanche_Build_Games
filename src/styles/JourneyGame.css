@@ -9,6 +9,14 @@
     overflow: hidden;
 }
 
+.planet-journey {
+    background: linear-gradient(to bottom, #001f4d, #000010);
+    /* deep space gradient */
+    color: white;
+    min-height: 100vh;
+    padding-bottom: 2rem;
+}
+
 .space-area-3d {
     height: 500px;
     background: radial-gradient(ellipse at bottom, #000428, #004e92);
@@ -146,12 +154,33 @@
     }
 }
 
+.stat-info p {
+    margin: 0.3rem 0;
+    font-weight: bold;
+}
+
+.game-complete,
+.game-over-screen {
+    background-color: rgba(0, 0, 0, 0.85);
+    padding: 2rem;
+    border: 2px solid #0ff;
+    border-radius: 12px;
+    text-align: center;
+    margin: 2rem auto;
+    width: 90%;
+    max-width: 500px;
+    color: #fff;
+}
+
 /* --- Fuel and Distance Bars --- */
 .hud {
     display: flex;
-    gap: 2rem;
-    align-items: center;
+    justify-content: space-around;
+    padding: 1rem;
+    background-color: rgba(0, 0, 0, 0.6);
+    border-bottom: 2px solid #0ff;
     margin-bottom: 1rem;
+    color: #fff;
 }
 
 .fuel-bar-container,

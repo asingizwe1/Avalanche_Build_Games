@@ -5,6 +5,7 @@ import { EffectComposer, Bloom } from '@react-three/postprocessing';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three-stdlib';
 import '../styles/SolarSystemExplorer.css';
+import InfoPanel from './InfoPanel';
 
 // NASA-inspired color palette
 const nasaColors = {
@@ -30,7 +31,7 @@ const planetsData = [
 const Planet = ({ planet, selected, setSelected }) => {
   const planetRef = useRef();
   const [hovered, setHover] = useState(false);
-  
+
   useFrame(({ clock }) => {
     const elapsedTime = clock.getElapsedTime();
     planetRef.current.position.x = Math.cos(elapsedTime * planet.speed) * planet.orbitRadius;
@@ -42,19 +43,22 @@ const Planet = ({ planet, selected, setSelected }) => {
       <mesh
         ref={planetRef}
         scale={selected === planet.name ? [planet.size * 1.5, planet.size * 1.5, planet.size * 1.5] : [planet.size, planet.size, planet.size]}
-        onClick={() => setSelected(planet.name)}
+        onClick={(e) => {
+          e.stopPropagation(); // 👈 Add this line
+          setSelected(planet.name);
+        }}
         onPointerOver={() => setHover(true)}
         onPointerOut={() => setHover(false)}
       >
         <sphereGeometry args={[1, 32, 32]} />
-        <meshStandardMaterial 
-          color={planet.color} 
-          map={useTexture(planet.texture)} 
-          emissive={planet.color} 
+        <meshStandardMaterial
+          color={planet.color}
+          map={useTexture(planet.texture)}
+          emissive={planet.color}
           emissiveIntensity={0.1}
         />
       </mesh>
-      
+
       {(hovered || selected === planet.name) && (
         <Float speed={2} rotationIntensity={0.5} floatIntensity={0.5}>
           <Text
@@ -70,7 +74,7 @@ const Planet = ({ planet, selected, setSelected }) => {
           </Text>
         </Float>
       )}
-      
+
       {planet.rings && (
         <mesh rotation={[Math.PI / 2, 0, 0]} position={planetRef.current?.position}>
           <ringGeometry args={[planet.size * 1.2, planet.size * 1.8, 64]} />
@@ -86,10 +90,10 @@ const Sun = () => {
     <group>
       <mesh>
         <sphereGeometry args={[4, 32, 32]} />
-        <meshStandardMaterial 
-          color="#ffff00" 
-          emissive="#fc3d21" 
-          emissiveIntensity={2} 
+        <meshStandardMaterial
+          color="#ffff00"
+          emissive="#fc3d21"
+          emissiveIntensity={2}
         />
       </mesh>
       <pointLight color="#ffffff" intensity={2} distance={100} />
@@ -115,9 +119,9 @@ const OrbitPath = ({ radius }) => {
     points.push(new THREE.Vector3(Math.cos(angle) * radius, 0, Math.sin(angle) * radius));
   }
   points.push(points[0]);
-  
+
   const lineGeometry = new THREE.BufferGeometry().setFromPoints(points);
-  
+
   return (
     <line geometry={lineGeometry}>
       <lineBasicMaterial attach="material" color={nasaColors.orbitPaths} opacity={0.5} transparent linewidth={1} />
@@ -130,58 +134,61 @@ const NASAEyesScene = ({ selected, setSelected }) => {
     <>
       <ambientLight intensity={0.1} />
       <pointLight position={[10, 10, 10]} intensity={0.5} />
-      
+
       <Sun />
-      
+
       {planetsData.map((planet) => (
-        <group key={planet.name}>
+        <group key={planet.name} onClick={(e) => {
+          e.stopPropagation(); // Prevent canvas click from immediately clearing selection
+          setSelected(planet.name);
+        }}>
           <OrbitPath radius={planet.orbitRadius} />
           <Planet planet={planet} selected={selected} setSelected={setSelected} />
         </group>
       ))}
-      
+
       <Stars radius={500} depth={100} count={10000} factor={8} saturation={0} fade speed={2} />
     </>
   );
 };
 
-const InfoPanel = ({ selectedPlanet }) => {
-  if (!selectedPlanet) return null;
-  
-  const planet = planetsData.find(p => p.name === selectedPlanet);
-  
-  return (
-    <div className="nasa-info-panel">
-      <h3>{planet.name}</h3>
-      <div className="nasa-info-grid">
-        <div>
-          <span>Diameter:</span>
-          <span>{planet.size.toFixed(2)} Earth diameters</span>
-        </div>
-        <div>
-          <span>Orbit Radius:</span>
-          <span>{planet.orbitRadius.toFixed(1)} AU</span>
-        </div>
-        <div>
-          <span>Orbital Period:</span>
-          <span>{(2 * Math.PI / planet.speed / 60).toFixed(1)} seconds</span>
-        </div>
-      </div>
-      <div className="nasa-divider" />
-      <p>Click anywhere to exit</p>
-    </div>
-  );
-};
+// const InfoPanel = ({ selectedPlanet }) => {
+//   if (!selectedPlanet) return null;
+
+//   const planet = planetsData.find(p => p.name === selectedPlanet);
+
+//   return (
+//     <div className="nasa-info-panel">
+//       <h3>{planet.name}</h3>
+//       <div className="nasa-info-grid">
+//         <div>
+//           <span>Diameter:</span>
+//           <span>{planet.size.toFixed(2)} Earth diameters</span>
+//         </div>
+//         <div>
+//           <span>Orbit Radius:</span>
+//           <span>{planet.orbitRadius.toFixed(1)} AU</span>
+//         </div>
+//         <div>
+//           <span>Orbital Period:</span>
+//           <span>{(2 * Math.PI / planet.speed / 60).toFixed(1)} seconds</span>
+//         </div>
+//       </div>
+//       <div className="nasa-divider" />
+//       <p>Click anywhere to exit</p>
+//     </div>
+//   );
+// };
 
 const SolarSystemExplorer = () => {
   const [selected, setSelected] = useState(null);
   const [date, setDate] = useState(new Date());
-  
+
   useEffect(() => {
     const timer = setInterval(() => setDate(new Date()), 1000);
     return () => clearInterval(timer);
   }, []);
-  
+
   return (
     <div className="nasa-container">
       <div className="nasa-header">
@@ -192,11 +199,11 @@ const SolarSystemExplorer = () => {
           {date.toUTCString()}
         </div>
       </div>
-      
+
       <div className="nasa-canvas-container" onClick={() => selected && setSelected(null)}>
         <Canvas>
           <PerspectiveCamera makeDefault position={[0, 50, 150]} fov={45} />
-          <OrbitControls 
+          <OrbitControls
             enableZoom={true}
             enablePan={true}
             enableRotate={true}
@@ -213,10 +220,9 @@ const SolarSystemExplorer = () => {
             <NASAEyesScene selected={selected} setSelected={setSelected} />
           </Suspense>
         </Canvas>
-        
-        {selected && <InfoPanel selectedPlanet={selected} />}
+        {selected && <InfoPanel selectedPlanet={selected} onClose={() => setSelected(null)} />}
       </div>
-      
+
       <div className="nasa-controls">
         <div className="nasa-control-group">
           <button className="nasa-button">Time Controls</button>

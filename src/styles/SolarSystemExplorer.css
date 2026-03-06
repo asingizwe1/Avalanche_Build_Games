@@ -11,6 +11,58 @@
   flex-direction: column;
 }
 
+.nasa-info-panel {
+  position: absolute;
+  top: 80px;
+  right: 20px;
+  background: rgba(11, 61, 145, 0.95);
+  color: white;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+  width: 300px;
+  z-index: 10;
+  transition: transform 0.3s ease;
+  border: 1px solid #0ff;
+  font-family: 'Orbitron', sans-serif;
+}
+
+.nasa-info-panel h3 {
+  margin-top: 0;
+  font-size: 1.5rem;
+  color: #0ff;
+}
+
+.nasa-info-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.nasa-info-grid div {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.95rem;
+}
+
+.planet-description {
+  font-style: italic;
+  margin: 0.5rem 0;
+  color: #ddd;
+}
+
+.close-btn {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  background: transparent;
+  color: white;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
 .quiz-success-msg {
   position: absolute;
   top: 20%;

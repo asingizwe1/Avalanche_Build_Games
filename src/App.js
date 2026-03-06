@@ -7,6 +7,7 @@ import LearningModules from './components/LearningModules';
 import RocketScienceLab from './components/RocketScienceLab';
 import SolarSystemExplorer from './components/SolarSystemExplorer';
 import Profile from './components/Profile';
+import CosmicQuizGame from './components/CosmicQuizGame';
 import AdminPanel from './components/admin/AdminPanel';
 import PageNotFound from './pages/PageNotFound';
 import AuthWrapper from './components/AuthWrapper';
@@ -14,6 +15,7 @@ import AdminAuthWrapper from './components/admin/AdminAuthWrapper';
 import RocketsModule from './components/RocketsModule';
 import FastTypingGame from './components/FastTypeGame';
 import JourneyGame from './components/JourneyGame';;
+
 
 function App() {
   return (
@@ -35,8 +37,10 @@ function App() {
             <Route path="/games/planet-explorer" element={<JourneyGame />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/learn/rockets" element={<RocketsModule />} />
+            <Route path="/games/cosmic-quiz" element={<CosmicQuizGame />} />
             <Route path="/games/fast-typing-game" element={<FastTypingGame />} />
             <Route path="/learn/profile" element={<Profile />} />
+            <Route path="/journey" element={<JourneyGame />} />
           </Route>
 
           {/* Admin Routes */}
