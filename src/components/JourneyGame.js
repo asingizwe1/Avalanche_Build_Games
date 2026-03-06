@@ -1,16 +1,9 @@
-// 🚀 Galactic Voyage Game
-import React, { useState, useEffect } from 'react';
-import QuizComponent from './QuizComponent'; // Make sure this is shared or embedded
+import React, { useState, useEffect, useCallback } from 'react';
+import { Canvas } from '@react-three/fiber';
+import RocketModel from './RocketModel';
+import QuizComponent from './QuizComponent';
 import '../styles/JourneyGame.css';
-
-const planets = [
-    { name: 'Mars', distance: 100 },
-    { name: 'Jupiter', distance: 200 },
-    { name: 'Saturn', distance: 300 },
-    { name: 'Uranus', distance: 400 },
-    { name: 'Neptune', distance: 500 },
-    { name: 'Pluto', distance: 600, isFinal: true },
-];
+import { OrbitControls, Stars, Text } from '@react-three/drei';
 
 const PlanetJourney = ({ onReachPluto }) => {
     const [position, setPosition] = useState(0);
@@ -19,31 +12,30 @@ const PlanetJourney = ({ onReachPluto }) => {
     const [currentPlanet, setCurrentPlanet] = useState(0);
     const [gameOver, setGameOver] = useState(false);
 
-    const handleKeyPress = (e) => {
-        if (quizMode || gameOver) return;
+    const planets = [
+        { name: 'Mars', distance: 100 },
+        { name: 'Jupiter', distance: 200 },
+        { name: 'Saturn', distance: 300 },
+        { name: 'Uranus', distance: 400 },
+        { name: 'Neptune', distance: 500 },
+        { name: 'Pluto', distance: 600, isFinal: true },
+    ];
 
+    const handleKeyPress = useCallback((e) => {
+        if (quizMode || gameOver) return;
         if (fuel <= 0) {
             setGameOver(true);
             return;
         }
 
-        let newPosition = position;
-
-        if (e.key === 'ArrowLeft') {
-            newPosition = Math.max(0, position - 10);
-        } else if (e.key === 'ArrowRight') {
-            newPosition = Math.min(planets[currentPlanet].distance, position + 10);
-        } else {
-            return;
-        }
+        if (e.key === 'ArrowLeft') setPosition((p) => p - 10);
+        if (e.key === 'ArrowRight') setPosition((p) => p + 10);
 
         setFuel((f) => f - 2);
-        setPosition(newPosition);
-
-        if (newPosition >= planets[currentPlanet].distance - 5) {
+        if (position + 50 >= planets[currentPlanet].distance) {
             setQuizMode(true);
         }
-    };
+    }, [quizMode, gameOver, fuel, position, currentPlanet, planets]);
 
     useEffect(() => {
         window.addEventListener('keydown', handleKeyPress);
@@ -56,39 +48,78 @@ const PlanetJourney = ({ onReachPluto }) => {
             setCurrentPlanet(nextPlanet);
             setFuel(100);
             setQuizMode(false);
+            // setShowQuizPopup(false);
         } else {
             onReachPluto();
         }
     };
 
+    const PlanetMesh = ({ name, distance, color }) => (
+        <mesh position={[distance / 50, 0, 0]}>
+            <sphereGeometry args={[0.5, 32, 32]} />
+            <meshStandardMaterial emissive={color} emissiveIntensity={0.8} />
+            <Text
+                position={[0, 1, 0]}
+                fontSize={0.3}
+                color="white"
+                anchorX="center"
+                anchorY="middle"
+            >
+                {name}
+            </Text>
+        </mesh>
+    );
     return (
         <div className="planet-journey">
             <h2>Journey to {planets[currentPlanet].name}</h2>
             <div className="hud">
-                <p>Fuel: {fuel}%</p>
-                <p>Position: {position} / {planets[currentPlanet].distance}</p>
-            </div>
-            <div className="space-area">
-                <div className="rocket-container" style={{ bottom: `${position}px` }}>
-                    <img src="/rocket.png" alt="rocket" className="rocket-sprite" />
-                    {fuel > 0 && <div className="flame-animation" />}
+                <div>
+                    <p>Fuel</p>
+                    <div className="fuel-bar-container">
+                        <div className="fuel-bar" style={{ width: `${fuel}%` }}></div>
+                    </div>
                 </div>
-                <div className="planet-label">
-                    🪐 {planets[currentPlanet].name}
+                <div>
+                    <p>Progress</p>
+                    <div className="progress-bar-container">
+                        <div
+                            className="progress-bar"
+                            style={{
+                                width: `${Math.min((position / planets[currentPlanet].distance) * 100, 100)}%`
+                            }}
+                        ></div>
+                    </div>
                 </div>
             </div>
 
+            <div className="space-area-3d">
+                <Canvas camera={{ position: [0, 1, 5] }}>
+                    <ambientLight intensity={0.5} />
+                    <directionalLight position={[2, 5, 2]} />
+                    <Stars radius={100} depth={50} count={3000} factor={4} fade speed={1} />
+                    {planets.map((p, i) => (
+                        <PlanetMesh
+                            key={p.name}
+                            name={p.name}
+                            distance={p.distance}
+                            color={i % 2 === 0 ? '#0ff' : '#f39c12'}
+                        />
+                    ))}
+                    <RocketModel position={[position / 50, 0, 0]} scale={0.5} />                    <OrbitControls enableZoom={false} />
+                </Canvas>
+            </div>
+
             {quizMode && (
-                <QuizComponent
-                    questions={[
-                        {
+                <div className="quiz-popup">
+                    <QuizComponent
+                        questions={[{
                             question: "Which planet has the largest moon in the solar system?",
                             options: ["Earth", "Jupiter", "Saturn", "Neptune"],
                             correctAnswer: 1,
-                        }
-                    ]}
-                    onComplete={handleQuizSuccess}
-                />
+                        }]}
+                        onComplete={handleQuizSuccess}
+                    />
+                </div>
             )}
 
             {gameOver && <div className="game-over">Game Over — Out of fuel!</div>}
