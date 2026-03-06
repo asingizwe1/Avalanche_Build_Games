@@ -174,3 +174,38 @@
     background: linear-gradient(to right, #0ff, #09f);
     transition: width 0.3s ease;
 }
+
+.quiz-success-msg {
+    background-color: #0b3d91;
+    color: #00ffcc;
+    padding: 1rem;
+    font-size: 1.2rem;
+    font-weight: bold;
+    text-align: center;
+    border-radius: 10px;
+    margin: 1rem auto;
+    width: fit-content;
+    animation: fadePop 2s ease-in-out;
+}
+
+@keyframes fadePop {
+    0% {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+
+    20% {
+        opacity: 1;
+        transform: scale(1.05);
+    }
+
+    80% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    100% {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+}
