@@ -13,7 +13,46 @@ const PlanetJourney = ({ onReachPluto }) => {
     const [currentPlanet, setCurrentPlanet] = useState(0);
     const [gameOver, setGameOver] = useState(false);
     const [quizCompleted, setQuizCompleted] = useState(false);
-
+    const [xp, setXp] = useState(0);
+    const [points, setPoints] = useState(0);
+    const [questions] = useState([
+        {
+            planet: 'Mars',
+            question: 'Which planet is known as the Red Planet?',
+            options: ['Earth', 'Mars', 'Venus', 'Jupiter'],
+            correctAnswer: 1,
+        },
+        {
+            planet: 'Jupiter',
+            question: 'Which planet has the strongest gravity?',
+            options: ['Earth', 'Saturn', 'Jupiter', 'Neptune'],
+            correctAnswer: 2,
+        },
+        {
+            planet: 'Saturn',
+            question: 'Which planet is famous for its rings?',
+            options: ['Mars', 'Jupiter', 'Saturn', 'Uranus'],
+            correctAnswer: 2,
+        },
+        {
+            planet: 'Uranus',
+            question: 'Which planet rotates on its side?',
+            options: ['Venus', 'Uranus', 'Neptune', 'Pluto'],
+            correctAnswer: 1,
+        },
+        {
+            planet: 'Neptune',
+            question: 'Which planet is farthest from the Sun (not dwarf)?',
+            options: ['Uranus', 'Saturn', 'Neptune', 'Jupiter'],
+            correctAnswer: 2,
+        },
+        {
+            planet: 'Pluto',
+            question: 'What is Pluto classified as?',
+            options: ['Planet', 'Moon', 'Asteroid', 'Dwarf planet'],
+            correctAnswer: 3,
+        },
+    ]);
     const planets = [
         { name: 'Mars', distance: 100 },
         { name: 'Jupiter', distance: 200 },
@@ -25,7 +64,8 @@ const PlanetJourney = ({ onReachPluto }) => {
     const CameraRig = ({ targetX }) => {
         const { camera } = useThree();
         useFrame(() => {
-            camera.position.x += (targetX - camera.position.x) * 0.1;
+            const smoothFactor = 0.1;
+            camera.position.x += (targetX - camera.position.x) * smoothFactor;
             camera.lookAt(targetX, 0, 0);
         });
         return null;
@@ -37,8 +77,8 @@ const PlanetJourney = ({ onReachPluto }) => {
             return;
         }
 
-        if (e.key === 'ArrowLeft') setPosition((p) => p - 1);
-        if (e.key === 'ArrowRight') setPosition((p) => p + 1);
+        if (e.key === 'ArrowLeft') setPosition((p) => p - 5);
+        if (e.key === 'ArrowRight') setPosition((p) => p + 5);
 
         setFuel((f) => f - 1);
         if (position >= planets[currentPlanet].distance) {
@@ -52,19 +92,19 @@ const PlanetJourney = ({ onReachPluto }) => {
     }, [position, fuel, quizMode]);
 
     const handleQuizSuccess = () => {
+        setXp((prevXp) => prevXp + 50); // award XP
+        setPoints((prevPoints) => prevPoints + 100); // award points
         const nextPlanet = currentPlanet + 1;
+
         if (planets[nextPlanet]) {
             setCurrentPlanet(nextPlanet);
             setFuel(100);
             setQuizMode(false);
             setQuizCompleted(true);
-
-            setTimeout(() => {
-                setQuizCompleted(false);
-            }, 2000);
-            // setShowQuizPopup(false);
+            setTimeout(() => setQuizCompleted(false), 2000);
         } else {
             onReachPluto();
+            console.log('Final XP:', xp, 'Points:', points); // hook for onchain
         }
     };
     useEffect(() => {
@@ -74,8 +114,7 @@ const PlanetJourney = ({ onReachPluto }) => {
 
     const PlanetMesh = ({ name, distance, color }) => (
         <mesh position={[distance, 0, 0]}>
-            <sphereGeometry args={[0.5, 32, 32]} />
-            <meshStandardMaterial emissive={color} emissiveIntensity={0.8} />
+            <sphereGeometry args={[0.8, 32, 32]} />            <meshStandardMaterial emissive={color} emissiveIntensity={0.8} />
             <Text
                 position={[0, 1, 0]}
                 fontSize={0.3}
@@ -110,6 +149,10 @@ const PlanetJourney = ({ onReachPluto }) => {
                         ></div>
                     </div>
                 </div>
+                <div className="stat-info">
+                    <p>XP: {xp}</p>
+                    <p>Points: {points}</p>
+                </div>
             </div>
 
             {quizCompleted && (
@@ -119,8 +162,7 @@ const PlanetJourney = ({ onReachPluto }) => {
             )}
 
             <div className="space-area-3d">
-                <Canvas camera={{ position: [0, 2, 40] }}>
-                    <CameraRig targetX={position} />
+                <Canvas camera={{ position: [-30, 10, 50], fov: 45 }}>                    <CameraRig targetX={position} />
                     <ambientLight intensity={0.5} />
                     <directionalLight position={[2, 5, 2]} />
                     <Stars radius={100} depth={50} count={3000} factor={4} fade speed={1} />
@@ -132,18 +174,14 @@ const PlanetJourney = ({ onReachPluto }) => {
                             color={i % 2 === 0 ? '#0ff' : '#f39c12'}
                         />
                     ))}
-                    <RocketModel position={[position, 0, 0]} scale={0.5} />                    <OrbitControls enableZoom={false} />
+                    <RocketModel position={[position, 0, 0]} />                  <OrbitControls enableZoom={false} />
                 </Canvas>
             </div>
 
             {quizMode && (
                 <div className="quiz-popup">
                     <QuizComponent
-                        questions={[{
-                            question: "Which planet has the largest moon in the solar system?",
-                            options: ["Earth", "Jupiter", "Saturn", "Neptune"],
-                            correctAnswer: 1,
-                        }]}
+                        questions={[questions.find(q => q.planet === planets[currentPlanet].name)]}
                         onComplete={handleQuizSuccess}
                     />
                 </div>
