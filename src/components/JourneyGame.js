@@ -53,9 +53,13 @@ const PlanetJourney = ({ onReachPluto }) => {
             onReachPluto();
         }
     };
+    useEffect(() => {
+        window.addEventListener('keydown', handleKeyPress);
+        return () => window.removeEventListener('keydown', handleKeyPress);
+    }, [handleKeyPress]); // not [position, quizMode...]
 
     const PlanetMesh = ({ name, distance, color }) => (
-        <mesh position={[distance / 50, 0, 0]}>
+        <mesh position={[distance / 0.1, 0, 0]}>
             <sphereGeometry args={[0.5, 32, 32]} />
             <meshStandardMaterial emissive={color} emissiveIntensity={0.8} />
             <Text
@@ -93,7 +97,7 @@ const PlanetJourney = ({ onReachPluto }) => {
             </div>
 
             <div className="space-area-3d">
-                <Canvas camera={{ position: [0, 1, 5] }}>
+                <Canvas camera={{ position: [0, 2, 20] }}>
                     <ambientLight intensity={0.5} />
                     <directionalLight position={[2, 5, 2]} />
                     <Stars radius={100} depth={50} count={3000} factor={4} fade speed={1} />
