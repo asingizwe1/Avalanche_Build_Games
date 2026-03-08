@@ -9,7 +9,7 @@ import QuickAccessMenu from '../components/QuickAccessMenu';
 import GameCard from './GameGuard';
 import { db } from '../firebase';
 import { collection, getDocs, query, orderBy } from 'firebase/firestore';
-
+import { fetchLeaderboardFromChain } from '../utils/fetchLeaderboard';
 const Dashboard = () => {
   const [userProgress, setUserProgress] = useState({
     aerospace: 72,
@@ -64,6 +64,19 @@ const Dashboard = () => {
     };
 
     fetchData();
+  }, []);
+
+  useEffect(() => {
+    const loadLeaderboard = async () => {
+      try {
+        const chainData = await fetchLeaderboardFromChain();
+        setLeaderboard(chainData);
+      } catch (error) {
+        console.error('Chain leaderboard error:', error);
+      }
+    };
+
+    loadLeaderboard();
   }, []);
 
   const handleModuleSelect = (module) => {
@@ -186,8 +199,8 @@ const Dashboard = () => {
             {leaderboard.map((user, index) => (
               <div key={user.id} className="leaderboard-entry">
                 <span className="rank">{index + 1}</span>
-                <span className="avatar">{user.avatar}</span>
-                <span className="name">{user.name}</span>
+                <span className="avatar">👽</span>
+                <span className="name">{user.address.slice(0, 6)}...{user.address.slice(-4)}</span>
                 <span className="points">{user.points} XP</span>
               </div>
             ))}
