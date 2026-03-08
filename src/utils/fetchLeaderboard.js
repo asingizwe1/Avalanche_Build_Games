@@ -1,5 +1,5 @@
 import { ethers } from 'ethers';
-import contractABI from '../abis/SpaceDappGame.json';
+import contractABI from '../abi/SpaceDappGame.json';
 
 const CONTRACT_ADDRESS = '0x575A29635f019A33eB574eeA4Ea8070128edd7F7';
 const RPC_URL = 'https://api.avax-test.network/ext/bc/C/rpc';

@@ -10,7 +10,16 @@ import GameCard from './GameGuard';
 import { db } from '../firebase';
 import { collection, getDocs, query, orderBy } from 'firebase/firestore';
 import { fetchLeaderboardFromChain } from '../utils/fetchLeaderboard';
+import { ethers } from 'ethers';
+import contractABI from '../abi/SpaceDappGame.json';
+import { useLocation } from 'react-router-dom';
+
+const contractAddress = '0x575A29635f019A33eB574eeA4Ea8070128edd7F7';
+
 const Dashboard = () => {
+  const location = useLocation();
+  const walletAddress = location.state?.walletAddress;
+
   const [userProgress, setUserProgress] = useState({
     aerospace: 72,
     rockets: 45,
@@ -78,6 +87,42 @@ const Dashboard = () => {
 
     loadLeaderboard();
   }, []);
+
+  useEffect(() => {
+    const fetchOnChainStats = async () => {
+      if (!walletAddress) return;
+
+      try {
+        const provider = new ethers.BrowserProvider(window.ethereum); const contract = new ethers.Contract(contractAddress, contractABI, provider);
+
+        const typingStats = await contract.getTypingStats(walletAddress);
+        const quizStats = await contract.getQuizStats(walletAddress);
+        const spaceStats = await contract.getSpaceStats(walletAddress);
+
+        // Total score calculation (last score in each category)
+        const latestTyping = typingStats[typingStats.length - 1]?.score || 0;
+        const latestQuiz = quizStats[quizStats.length - 1]?.score || 0;
+        const latestSpace = spaceStats[spaceStats.length - 1]?.score || 0;
+
+        const totalXP = latestTyping + latestQuiz + latestSpace;
+
+        // Optional: update Firebase or leaderboard state
+        setLeaderboard(prev => {
+          const updated = [...prev];
+          const existing = updated.find(u => u.address === walletAddress);
+          if (!existing) {
+            updated.push({ address: walletAddress, points: totalXP });
+          }
+          return updated;
+        });
+
+      } catch (error) {
+        console.error('Failed to fetch user stats from contract:', error);
+      }
+    };
+
+    fetchOnChainStats();
+  }, [walletAddress]);
 
   const handleModuleSelect = (module) => {
     navigate(`/learn/${module}`);
@@ -200,8 +245,9 @@ const Dashboard = () => {
               <div key={user.id} className="leaderboard-entry">
                 <span className="rank">{index + 1}</span>
                 <span className="avatar">👽</span>
-                <span className="name">{user.address.slice(0, 6)}...{user.address.slice(-4)}</span>
-                <span className="points">{user.points} XP</span>
+                <span className="name">
+                  {user.address ? `${user.address.slice(0, 6)}...${user.address.slice(-4)}` : 'Unknown'}
+                </span>                <span className="points">{user.points} XP</span>
               </div>
             ))}
           </div>

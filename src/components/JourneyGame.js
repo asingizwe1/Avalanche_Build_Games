@@ -7,10 +7,28 @@ import { OrbitControls, Stars, Text } from '@react-three/drei';
 import { useNavigate } from 'react-router-dom';
 import { setDoc, doc } from 'firebase/firestore';
 import { db } from '../firebase';
+import { ethers } from 'ethers';
+import contractABI from '../abi/SpaceDappGame.json';
 
+const contractAddress = '0x575A29635f019A33eB574eeA4Ea8070128edd7F7';
 
 
 const PlanetJourney = ({ onReachPluto }) => {
+    const saveResultsToChain = async () => {
+        if (!window.ethereum || !walletAddress) return;
+
+        const provider = new ethers.BrowserProvider(window.ethereum);
+        const signer = await provider.getSigner();
+        const contract = new ethers.Contract(contractAddress, contractABI, signer);
+
+        try {
+            const tx = await contract.recordSpaceGame(points);// 1 = Space
+            await tx.wait();
+            console.log("Game results recorded on-chain:", tx.hash);
+        } catch (err) {
+            console.error("On-chain error:", err);
+        }
+    };
     const navigate = useNavigate();
     const [position, setPosition] = useState(0);
     const [fuel, setFuel] = useState(100);
@@ -119,6 +137,7 @@ const PlanetJourney = ({ onReachPluto }) => {
                 updated: new Date().toISOString(),
             }, { merge: true });
 
+            await saveResultsToChain();
             setGameFinished(true); // mark game done
         }
     };

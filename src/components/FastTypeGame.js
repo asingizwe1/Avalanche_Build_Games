@@ -25,7 +25,7 @@
 //   // Initialize game
 //   useEffect(() => {
 //     if (!gameActive) return;
-    
+
 //     setWord(getRandomWord());
 //     const timer = setInterval(() => {
 //       setTimeLeft(prev => {
@@ -48,7 +48,7 @@
 //   const handleChange = (e) => {
 //     const value = e.target.value;
 //     setInput(value);
-    
+
 //     if (value.trim().toLowerCase() === word.toLowerCase()) {
 //       // Correct word typed
 //       setScore(prev => prev + 1);
@@ -89,12 +89,12 @@
 //     <div className="typing-game-container">
 //       <div className="stars"></div>
 //       <div className="twinkling"></div>
-      
+
 //       <div className="game-header">
 //         <h1>AstroType Challenge</h1>
 //         <p>Type aerospace terms as fast as rockets launch!</p>
 //       </div>
-      
+
 //       <div className="game-display">
 //         <div className="word-display">
 //           {word.split('').map((letter, index) => (
@@ -112,7 +112,7 @@
 //             </span>
 //           ))}
 //         </div>
-        
+
 //         <input
 //           ref={inputRef}
 //           type="text"
@@ -123,7 +123,7 @@
 //           className={gameActive ? 'active-input' : ''}
 //         />
 //       </div>
-      
+
 //       <div className="game-stats">
 //         <div className="stat-box">
 //           <div className="stat-label">Time</div>
@@ -142,7 +142,7 @@
 //           <div className="stat-value">{wpm}</div>
 //         </div>
 //       </div>
-      
+
 //       <button 
 //         className={`start-button ${gameActive ? 'active' : ''}`}
 //         onClick={startGame}
@@ -152,7 +152,7 @@
 //       <button onClick={() => navigate('/dashboard')} className="home-button">
 //           Return to Home Base
 //         </button>
-      
+
 //       {showResult && (
 //         <div className="result-overlay">
 //           <div className="result-card">
@@ -160,7 +160,7 @@
 //               <h2>Mission Report</h2>
 //               <div className="rocket-icon">🚀</div>
 //             </div>
-            
+
 //             <div className="result-stats">
 //               <div className="result-stat">
 //                 <span className="stat-name">Final Score</span>
@@ -175,7 +175,7 @@
 //                 <span className="stat-value">{highScore}</span>
 //               </div>
 //             </div>
-            
+
 //             <div className="result-message">
 //               {score >= highScore && highScore > 0 ? (
 //                 <p className="new-record">New Record! 🎉</p>
@@ -183,7 +183,7 @@
 //                 <p>Keep practicing astronaut!</p>
 //               )}
 //             </div>
-            
+
 //             <button 
 //               className="close-result"
 //               onClick={() => setShowResult(false)}
@@ -377,7 +377,7 @@
 //       >
 //         {gameActive ? 'Restart' : 'Launch Game'}
 //       </button>
-      
+
 //       <button onClick={() => navigate('/dashboard')} className="home-button">
 //         Return to Home Base
 //       </button>
@@ -602,7 +602,7 @@
 //       >
 //         {gameActive ? 'Restart' : 'Launch Game'}
 //       </button>
-      
+
 //       <button onClick={() => navigate('/dashboard')} className="home-button">
 //         Return to Home Base
 //       </button>
@@ -653,13 +653,11 @@
 
 // export default FastTypingGame;
 
-
-
-
+import { ethers } from 'ethers';
+import contractABI from '../abi/SpaceDappGame.json'; // Adjust path as needed
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { db } from '../firebase';
-import { doc, onSnapshot, updateDoc } from 'firebase/firestore';
+// import { db } from '../firebase';
 import '../styles/FastTypingGame.css';
 
 const aerospaceWords = [
@@ -668,8 +666,18 @@ const aerospaceWords = [
   'liftoff', 'trajectory', 'staging', 'thruster', 'aerodynamics', 'vacuum',
   'module', 'cosmonaut', 'apogee', 'reentry', 'turbopump', 'burnout'
 ];
-
+const contractAddress = '0x575A29635f019A33eB574eeA4Ea8070128edd7F7'; // Your deployed contract address
 const FastTypingGame = () => {
+  const [account, setAccount] = useState(null);
+
+  const connectWallet = async () => {
+    if (window.ethereum) {
+      const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+      setAccount(accounts[0]);
+    } else {
+      alert("MetaMask not detected");
+    }
+  };
   const [word, setWord] = useState('');
   const [input, setInput] = useState('');
   const [timeLeft, setTimeLeft] = useState(30);
@@ -689,24 +697,24 @@ const FastTypingGame = () => {
   }, []);
 
   // Real-time Firestore listener for high score
-  useEffect(() => {
-    if (!userId) return; // Don't run until we have a user ID
+  // useEffect(() => {
+  //   if (!userId) return; // Don't run until we have a user ID
 
-    const docRef = doc(db, 'leaderboard', userId);
-    const unsubscribe = onSnapshot(docRef, (snapshot) => {
-      if (snapshot.exists()) {
-        const data = snapshot.data();
-        setHighScore(data.points || 0);
-      } else {
-        // Initialize if document doesn't exist
-        updateDoc(docRef, { points: 0 })
-          .then(() => setHighScore(0))
-          .catch(console.error);
-      }
-    });
+  //   const docRef = doc(db, 'leaderboard', userId);
+  //   const unsubscribe = onSnapshot(docRef, (snapshot) => {
+  //     if (snapshot.exists()) {
+  //       const data = snapshot.data();
+  //       setHighScore(data.points || 0);
+  //     } else {
+  //       // Initialize if document doesn't exist
+  //       updateDoc(docRef, { points: 0 })
+  //         .then(() => setHighScore(0))
+  //         .catch(console.error);
+  //     }
+  //   });
 
-    return () => unsubscribe();
-  }, [userId]);
+  //   return () => unsubscribe();
+  // }, [userId]);
 
   // Start game logic
   useEffect(() => {
@@ -752,16 +760,34 @@ const FastTypingGame = () => {
     setTimeout(() => inputRef.current.focus(), 100);
   };
 
+  // const endGame = async () => {
+  //   setGameActive(false);
+  //   setShowResult(true);
+  //   await updateDoc(doc(db, 'leaderboard', userId), {
+  //     points: score,
+  //     lastUpdated: new Date().toISOString()
+  //   });
+  //   // No need to setHighScore here - the snapshot listener will update it
+
+
+  // };
   const endGame = async () => {
     setGameActive(false);
     setShowResult(true);
-        await updateDoc(doc(db, 'leaderboard', userId), {
-          points: score,
-          lastUpdated: new Date().toISOString()
-        });
-        // No need to setHighScore here - the snapshot listener will update it
-     
- 
+
+    if (!account) return;
+
+    const provider = new ethers.BrowserProvider(window.ethereum);
+    const signer = await provider.getSigner();
+    const contract = new ethers.Contract(contractAddress, contractABI, signer);
+
+    try {
+      const tx = await contract.recordTypingGame(score, wpm); // or whatever your contract method is
+      await tx.wait(); // wait for confirmation
+      console.log('Score submitted on-chain!');
+    } catch (err) {
+      console.error('Blockchain error:', err);
+    }
   };
 
   const animateSuccess = () => {
@@ -787,10 +813,10 @@ const FastTypingGame = () => {
       <div className="game-display">
         <div className="word-display">
           {word.split('').map((letter, index) => (
-            <span 
+            <span
               key={index}
               className={
-                input.length > index 
+                input.length > index
                   ? input[index].toLowerCase() === letter.toLowerCase()
                     ? 'correct'
                     : 'incorrect'
@@ -832,13 +858,13 @@ const FastTypingGame = () => {
         </div>
       </div>
 
-      <button 
+      <button
         className={`start-button ${gameActive ? 'active' : ''}`}
         onClick={startGame}
       >
         {gameActive ? 'Restart' : 'Launch Game'}
       </button>
-      
+
       <button onClick={() => navigate('/dashboard')} className="home-button">
         Return to Home Base
       </button>
@@ -874,7 +900,7 @@ const FastTypingGame = () => {
               )}
             </div>
 
-            <button 
+            <button
               className="close-result"
               onClick={() => setShowResult(false)}
             >
